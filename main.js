@@ -30,7 +30,7 @@ const pools = [
 ];
 
 var anchorAuth="owner";
-
+var isauth=false;
 main();
 async function main() {
   loggedIn = false;
@@ -51,21 +51,22 @@ async function main() {
     
  checkuser=GetAuthUsers();
  checkauth= await checkuser;
- var isauth=false;
+ isauth=false;
  for(i=0;i<checkauth.length;i++)
  {
    if(checkauth[i].account==wallet_userAccount)
    isauth=true;
  }
 
- if(isauth)
-   ShowAdminControls();
- else
- {
   PopulateMenu();
- }
+
  
     //document.getElementById("timeinput").oninput = TimeInputChanged;
+}
+function ShowAuthControls()
+{
+  if(isauth)
+  ShowAdminControls();
 }
 
 async function announcespin(id) {
@@ -323,7 +324,7 @@ async function GetConfig() {
 function ShowAdminControls() {
   var controls = "";
   var symbol = "WAX";
-  var menu ="";
+  var menu ="AUTH USER CONTROLS";
   for (var index = 0; index < config.length; ++index) {
     console.log(config[index].account);
     if(config[index].account==wallet_userAccount  )
@@ -334,7 +335,7 @@ function ShowAdminControls() {
     var ts = new Date(date);
     var disabled = config[index].assets.length>0? "" : " disabled";
 
-    menu += '<div  class="menuentry"><table><tr>';
+    menu += '<div  class="menuentry"> <table><tr>';
     menu += '<td class="stakeamount">' +"Giveaway ID "+ config[index].giveaway_id ;
     menu += '<br>'  +"By "+ config[index].account+
     '<br>' +"Entry cost  "+ config[index].entrycost +'<br>' + "Total entries " +config[index].entrants.length+" / "+config[index].max_acc_size
@@ -349,7 +350,7 @@ function ShowAdminControls() {
     menu += "</tr></table></div>";
     }
   }
-  document.getElementById("menu").innerHTML = menu;
+  document.getElementById("controls").innerHTML = menu;
 }
 
 function PopulateMenu() {

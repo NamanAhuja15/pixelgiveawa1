@@ -11,7 +11,7 @@
 <script src="https://unpkg.com/anchor-link-browser-transport@3"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-<body style="background-color: #36a1d5">
+<body style="background-color: #33ff00">
     <div id="toast" style="visibility: hidden"></div>
     <div id="walletlist" style="visibility: hidden">
         <div>
@@ -61,10 +61,13 @@
         <div class="content">        
             <div class="rightContent">
                 <div id="menu"></div>
+                <div id="controls"></div>
             </div>
             <div class="leftContent">
+                <div id="loggedin">
+                    <button class="buy" onclick="ShowAuthControls()">Show Auth Controls</button>
+                </div>
                 <div id="results"></div>
-
             </div>
 
         </div>

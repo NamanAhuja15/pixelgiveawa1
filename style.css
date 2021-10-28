@@ -312,6 +312,16 @@ a:-webkit-any-link {
   justify-content: center;
 }
 
+#controls {
+  display: grid;
+  grid-template-rows: auto auto;
+  grid-template-columns: auto auto;
+  align-items: center;
+  gap: 20px;
+  justify-content: center;
+  padding: 30px;
+}
+
 #timeselect {
   text-shadow: 1px 1px 2px #f7eeee;
   margin: 5% 0;
