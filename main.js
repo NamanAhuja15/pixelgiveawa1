@@ -7,22 +7,22 @@ const menuPrices = [1, 2, 4];
 const pools = [
   {
     name: "Pool 1",
-    url: "https://namanahuja15.github.io/cpu-stake/",
+    url: "https://cpuloanpools.github.io/cpuloanpools/",
     contract: "cpuloanstak1",
   },
   {
     name: "Pool 2",
-    url: "https://namanahuja15.github.io/cpu-stake/SecondPool/",
+    url: "https://cpuloanpools.github.io/cpuloanpools/SecondPool/",
     contract: "cpuloantests",
   },
   {
     name: "Pool 3",
-    url: "https://namanahuja15.github.io/cpu-stake/ThirdPool/",
+    url: "https://cpuloanpools.github.io/cpuloanpools/ThirdPool/",
     contract: "cpuloantests",
   },
   {
     name: "Pool 4",
-    url: "https://namanahuja15.github.io/cpu-stake/FourthPool/",
+    url: "https://cpuloanpools.github.io/cpuloanpools/FourthPool/",
     contract: "cpuloantests",
   },
 
@@ -63,6 +63,7 @@ async function main() {
  
     //document.getElementById("timeinput").oninput = TimeInputChanged;
 }
+
 function ShowAuthControls()
 {
   if(isauth)
@@ -392,7 +393,7 @@ function PopulateResultList() {
 
   for (var index = results.length-1; index >=0; --index) {
     html +=
-      '<div  class="pools_td">'+
+      '<div  class="results">'+
       "Giveaway ID: "+results[index].giveaway_id  +
 
       "<br>"+"Asset won: "+results[index].asset_id+

@@ -138,7 +138,8 @@ top:50%;
 }
 
 .rightContent {
-  justify-content: flex-end;
+  justify-content: left;
+  align-items: flex-start;
 }
 
 .navbar {
@@ -307,9 +308,9 @@ a:-webkit-any-link {
   display: grid;
   grid-template-rows: auto auto;
   grid-template-columns: auto auto;
-  align-items: center;
+  align-items:flex-start;
   gap: 20px;
-  justify-content: center;
+  justify-content:flex-start;
 }
 
 #controls {
@@ -320,6 +321,10 @@ a:-webkit-any-link {
   gap: 20px;
   justify-content: center;
   padding: 30px;
+}
+
+#results {
+font-size: 30px;
 }
 
 #timeselect {
