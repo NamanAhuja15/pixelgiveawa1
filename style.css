@@ -325,6 +325,7 @@ a:-webkit-any-link {
 
 #results {
 font-size: 30px;
+font-weight: bold;
 }
 
 #timeselect {
