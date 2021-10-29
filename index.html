@@ -26,7 +26,8 @@
         </div>
         <div>
             <button id="anchor" onclick='selectWallet("anchor")'>Anchor</button>
-        </div>
+        </div>               
+
     </div>
     <div id="message" style="visibility: hidden">
         <div><button class="close" onclick="HideMessage()">x</button></div>
@@ -62,25 +63,29 @@
         <div class="content">        
             <div class="rightContent">
                 <div id="menu"></div>
-                <div id="controls"></div>
+                <div id="assets"></div>
 
             </div>
             <div class="leftContent">
                 <div id="loggedin">
                     <button class="buy" onclick="ShowAuthControls()">Show Auth Controls</button>
                 </div>
-                <div id="results"></div>
+            <div id="controls"></div>
+
             </div>
 
         </div>
         <div class="bottomBar">
-            <div id="assets"></div>
+            
+            <div id="results"></div>
 
         </div>
     </div>
 
     <script>
         const contract = "pixelgiveawy";
+
+
     </script>
     <script src="./main.js"></script>
 </body>

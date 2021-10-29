@@ -60,6 +60,13 @@ async function main() {
 
   PopulateMenu();
 
+  let src = "https://ipfs.wecan.dev/ipfs/";   
+  var items = document.getElementById('leftContent');
+  var img = 'Qme5NtSC3Zw4ba6JNjmharfGaAcBm4PrfXoVe2e1kEsueu';
+  img2 = document.createElement('img');
+  img2.src = src + img;
+  img2.className = 'nftimg';
+  items.appendChild(img2);
  
     //document.getElementById("timeinput").oninput = TimeInputChanged;
 }
@@ -426,6 +433,7 @@ async function seeassets(giveaway_id) {
   html += "<div id=id>"+"AssetID "+assets[i].asset_id+"<br>";
   var img = document.createElement('img');
   img.src = src + assets[i].img;
+  console.log(img);
   document.getElementById('assets').appendChild(img);
   html += "</div>";
 
