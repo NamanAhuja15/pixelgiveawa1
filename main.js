@@ -57,7 +57,8 @@ async function main() {
    if(checkauth[i].account==wallet_userAccount)
    isauth=true;
  }
-
+if(!isauth)
+ document.getElementById("controls").style.visibility="hidden";
   PopulateMenu();
 
 
@@ -433,7 +434,7 @@ async function seeassets(giveaway_id) {
   html +=
   '<div  class="pools_td"><a href="' +
   src2 +assets[i].asset_id+
-  ' "style="text-decoration:underline;" >' +
+  ' "style="text-decoration:underline;" target="_blank" >' +
   "<div id="+assets[i].asset_id+">"+"AssetID "+assets[i].asset_id
   " </a></div>";
 }
