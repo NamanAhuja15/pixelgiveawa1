@@ -66,6 +66,7 @@ async function main() {
 
 function ShowAuthControls()
 {
+  console.log(isauth);
   if(isauth)
   ShowAdminControls();
 }
@@ -298,6 +299,7 @@ async function GetConfig() {
   let giveaways=[];
   for(i=0;i<body.rows.length;i++)
   {
+    if(body.rows[i].asset_ids.length!=0)
     giveaways.push({
       giveaway_id: parseInt(body.rows[i].id),
       entrycost: body.rows[i].entrycost,
