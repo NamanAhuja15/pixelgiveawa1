@@ -60,13 +60,7 @@ async function main() {
 
   PopulateMenu();
 
-  let src = "https://ipfs.wecan.dev/ipfs/";   
-  var items = document.getElementById('leftContent');
-  var img = 'Qme5NtSC3Zw4ba6JNjmharfGaAcBm4PrfXoVe2e1kEsueu';
-  img2 = document.createElement('img');
-  img2.src = src + img;
-  img2.className = 'nftimg';
-  items.appendChild(img2);
+
  
     //document.getElementById("timeinput").oninput = TimeInputChanged;
 }
@@ -357,9 +351,12 @@ function ShowAdminControls() {
         index +
         ")" +disabled+">Announce Spin "+
         "</button></td>";
+
+
     menu += "</tr></table></div>";
     }
   }
+
   document.getElementById("controls").innerHTML = menu;
 }
 
@@ -426,20 +423,22 @@ async function seeassets(giveaway_id) {
   console.log(assets);
   var html = '<div  id="assets">'+"Assets in giveaway"+current.giveaway_id+"<br>";
   let src = "https://ipfs.wecan.dev/ipfs/";   
+  let src2="https://wax-test.atomichub.io/explorer/asset/";
 
   for(i=0;i<assets.length;i++)
 {
-  id= "img"+assets[i].asset_id;
-  html += "<div id=id>"+"AssetID "+assets[i].asset_id+"<br>";
-  var img = document.createElement('img');
-  img.src = src + assets[i].img;
-  console.log(img);
-  document.getElementById('assets').appendChild(img);
-  html += "</div>";
 
-
+  var img = assets[i].img;
+  html+="<div class='nftimg'> <img src="+ src + img +"></div>";
+  html +=
+  '<div  class="pools_td"><a href="' +
+  src2 +assets[i].asset_id+
+  ' "style="text-decoration:underline;" >' +
+  "<div id="+assets[i].asset_id+">"+"AssetID "+assets[i].asset_id
+  " </a></div>";
 }
 html += "</div>";
+
   document.getElementById("assets").innerHTML = html;
 }
 
