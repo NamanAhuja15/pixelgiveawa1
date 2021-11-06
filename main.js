@@ -38,13 +38,6 @@ async function main() {
   config = await configPromise;
   resultPromise=GetResults();
   results=await resultPromise;
-  console.log(config);
-  console.log(results);
-
-
-    //freeSpace = await GetFreeSpace();
-
-
     PopulateResultList();
     autoLogin();
 
@@ -52,18 +45,21 @@ async function main() {
  checkuser=GetAuthUsers();
  checkauth= await checkuser;
  isauth=false;
+
+ if(loggedIn)
+ {
  for(i=0;i<checkauth.length;i++)
  {
    if(checkauth[i].account==wallet_userAccount)
    isauth=true;
  }
+}
 if(!isauth)
  document.getElementById("controls").style.visibility="hidden";
   PopulateMenu();
 
 
  
-    //document.getElementById("timeinput").oninput = TimeInputChanged;
 }
 
 function ShowAuthControls()
@@ -75,7 +71,6 @@ function ShowAuthControls()
 
 async function announcespin(id) {
   current=config[id];
-  console.log(current);
 
   if (loggedIn) {
     HideMessage();
@@ -106,7 +101,6 @@ async function announcespin(id) {
 
 async function join(id) {
   current=config[id];
-  console.log(current);
 
   if (loggedIn) {
     HideMessage();
@@ -141,14 +135,7 @@ async function join(id) {
 
 async function GetAuthUsers() {
   var path = "/v1/chain/get_table_rows";
-  // var data = JSON.stringify({ json: true, code: "nftgamerstkt", scope:"nftgamerstkt", table: "unboxtickets",key_type: `i64`,index_position:'2',lower_bound:'4732050217762867280',upper_bound:"",limit: 100 });
-  /*const response = await wax.rpc.get_table_rows({
-       json: true,
-        code: contract,
-        scope: contract,
-        table: 'config',
-        limit: 1
-      });*/
+
   var data = JSON.stringify({
     json: true,
     code: "pixelgiveawy",
@@ -188,14 +175,7 @@ async function GetAuthUsers() {
 
 async function GetResults() {
   var path = "/v1/chain/get_table_rows";
-  // var data = JSON.stringify({ json: true, code: "nftgamerstkt", scope:"nftgamerstkt", table: "unboxtickets",key_type: `i64`,index_position:'2',lower_bound:'4732050217762867280',upper_bound:"",limit: 100 });
-  /*const response = await wax.rpc.get_table_rows({
-       json: true,
-        code: contract,
-        scope: contract,
-        table: 'config',
-        limit: 1
-      });*/
+
   var data = JSON.stringify({
     json: true,
     code: "pixelgiveawy",
@@ -216,6 +196,7 @@ async function GetResults() {
   for(i=0;i<body.rows.length;i++)
   {
     results.push({
+      id:parseInt(body.rows[i].id ),
       giveaway_id: parseInt(body.rows[i].giveaway_id ),
       asset_id:body.rows[i].asset_id ,
       winner:body.rows[i].winner,
@@ -240,15 +221,6 @@ async function GetAssets(assetIDs) {
   {
 
     var path = "atomicassets/v1/assets/"+assetIDs[i];
-  // var data = JSON.stringify({ json: true, code: "nftgamerstkt", scope:"nftgamerstkt", table: "unboxtickets",key_type: `i64`,index_position:'2',lower_bound:'4732050217762867280',upper_bound:"",limit: 100 });
-  /*const response = await wax.rpc.get_table_rows({
-       json: true,
-        code: contract,
-        scope: contract,
-        table: 'config',
-        limit: 1
-      });*/
-
 
   const response = await fetch("https://" + "test.wax.api.atomicassets.io/" + path, {
     headers: { "Content-Type": "text/plain" },
@@ -273,14 +245,7 @@ async function GetAssets(assetIDs) {
 
 async function GetConfig() {
   var path = "/v1/chain/get_table_rows";
-  // var data = JSON.stringify({ json: true, code: "nftgamerstkt", scope:"nftgamerstkt", table: "unboxtickets",key_type: `i64`,index_position:'2',lower_bound:'4732050217762867280',upper_bound:"",limit: 100 });
-  /*const response = await wax.rpc.get_table_rows({
-       json: true,
-        code: contract,
-        scope: contract,
-        table: 'config',
-        limit: 1
-      });*/
+
   var data = JSON.stringify({
     json: true,
     code: "pixelgiveawy",
@@ -310,9 +275,9 @@ async function GetConfig() {
       entrants: body.rows[i].accounts,
       max_acc_size: body.rows[i].max_users,
       last_roll: body.rows[i].last_roll,
-      timer: body.rows[i].loop_seconds,
+      timer: body.rows[i].loop_time_seconds,
       templateID: body.rows[i].templateID,
-      q_needed: body.rows[i].quantiy_req,
+      q_needed: body.rows[i].quantity_req,
       gv_contract: body.rows[i].contract_account
     });
   }
@@ -335,16 +300,23 @@ function ShowAdminControls() {
     if(config[index].account==wallet_userAccount  )
     {
     var disabled = config[index].assets.length>0? "" : " disabled";
-    var date=Date.parse(config[index].last_roll);
-    console.log(date);
-    var ts = new Date(date);
+    var datex=Date.parse(config[index].last_roll);
+    var now= new Date();
+    var date=Math.floor(datex/1000);    
+    const utcMilllisecondsSinceEpoch = now.getTime() + (now.getTimezoneOffset() * 60 * 1000)  
+    const utcSecondsSinceEpoch = Math.round(utcMilllisecondsSinceEpoch / 1000) 
+    
+    
+
+    var ts = utcSecondsSinceEpoch-date>config[index].timer?0:(date+config[index].timer)-utcSecondsSinceEpoch;
+    console.log(utcSecondsSinceEpoch-date>config[index].timer);
     var disabled = config[index].assets.length>0? "" : " disabled";
 
     menu += '<div  class="menuentry"> <table><tr>';
     menu += '<td class="stakeamount">' +"Giveaway ID "+ config[index].giveaway_id ;
     menu += '<br>'  +"By "+ config[index].account+
     '<br>' +"Entry cost  "+ config[index].entrycost +'<br>' + "Total entries " +config[index].entrants.length+" / "+config[index].max_acc_size
-    +'<br>' +"assets in pool "+ config[index].assets.length +'<br>' + "Time to roll "+ ts.toLocaleString()+  "</td>"+
+    +'<br>' +"assets in pool "+ config[index].assets.length +'<br>' + "Time to roll "+ ts+" seconds"+  "</td>"+
       '<tr><td><button id="spin' +
         index +
         '" class="buy" onclick=' +
@@ -367,15 +339,22 @@ function PopulateMenu() {
   for (var index = 0; index < config.length; ++index) {
     console.log(config[index].account);
     var disabled = config[index].assets.length>0? "" : " disabled";
-    var date=Date.parse(config[index].last_roll);
-    console.log(date);
-    var ts = new Date(date);
+    var datex=Date.parse(config[index].last_roll);
+    var now= new Date();
+    var date=Math.floor(datex/1000);    
+    const utcMilllisecondsSinceEpoch = now.getTime() + (now.getTimezoneOffset() * 60 * 1000)  
+    const utcSecondsSinceEpoch = Math.round(utcMilllisecondsSinceEpoch / 1000) 
+    
+    
 
+    var ts = utcSecondsSinceEpoch-date>config[index].timer?0:(date+config[index].timer)-utcSecondsSinceEpoch ;
+    console.log(utcSecondsSinceEpoch-date);
+    
     menu += '<div  class="menuentry"><table><tr>';
     menu += '<td class="stakeamount">' +"Giveaway ID "+ config[index].giveaway_id ;
     menu += '<br>'  +"By "+ config[index].account +
     '<br>' +"Entry cost  "+ config[index].entrycost +'<br>' + "Total entries " +config[index].entrants.length+" / "+config[index].max_acc_size
-    +'<br>' +"assets in pool "+ config[index].assets.length +'<br>' + "Time to roll "+ ts.toLocaleString()+  "</td>"+
+    +'<br>' +"assets in pool "+ config[index].assets.length +'<br>' + "Time to roll "+ ts+ " seconds"+ "</td>"+
     '<tr><td><button id="join' +
       index +
       '" class="buy" onclick=' +
@@ -397,13 +376,18 @@ function PopulateMenu() {
 
 function PopulateResultList() {
   var html = '<div  id="results">'+"RESULTS"+"<br>";
+  let src = "https://ipfs.wecan.dev/ipfs/";   
+  let src2="https://wax-test.atomichub.io/explorer/asset/";
 
   for (var index = results.length-1; index >=0; --index) {
     html +=
       '<div  class="results">'+
+      "ID: "+results[index].id  +"<br>"+
       "Giveaway ID: "+results[index].giveaway_id  +
 
-      "<br>"+"Asset won: "+results[index].asset_id+
+      "<br>"+"Asset won:<a href=" +
+      src2 +results[index].asset_id+
+      ' "style="text-decoration:underline;" target="_blank" >' +results[index].asset_id+"</a>"+
       "<br>"+"Winner: "+results[index].winner+
       "<br>"+"roll_time: "+results[index].roll_time+
       "</div>"+
@@ -598,6 +582,8 @@ async function login() {
     document.getElementById("loggedin").style.display = "block";
     WalletListVisible(false);
     loggedIn = true;
+ document.getElementById("controls").style.visibility="visible";
+
   } catch (e) {
     document.getElementById("response").innerHTML = e.message;
   }
@@ -663,5 +649,6 @@ async function wallet_transact(actions) {
       { blocksBehind: 3, expireSeconds: 30 }
     );
   }
+  main();
   return result;
 }
