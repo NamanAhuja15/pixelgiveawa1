@@ -44,22 +44,29 @@ async function main() {
     
  checkuser=GetAuthUsers();
  checkauth= await checkuser;
- isauth=false;
+ 
+ isauth=check_auth(wallet_userAccount);
 
- if(loggedIn)
- {
- for(i=0;i<checkauth.length;i++)
- {
-   if(checkauth[i].account==wallet_userAccount)
-   isauth=true;
- }
-}
 if(!isauth)
  document.getElementById("controls").style.visibility="hidden";
   PopulateMenu();
 
 
  
+}
+
+function check_auth(username)
+{
+  
+ if(loggedIn)
+ {
+ for(i=0;i<checkauth.length;i++)
+ {
+   if(checkauth[i].account==username)
+   return true;
+ }
+}
+return false;
 }
 
 function ShowAuthControls()
@@ -583,6 +590,7 @@ async function login() {
     WalletListVisible(false);
     loggedIn = true;
  document.getElementById("controls").style.visibility="visible";
+ isauth=check_auth(wallet_userAccount);
 
   } catch (e) {
     document.getElementById("response").innerHTML = e.message;
