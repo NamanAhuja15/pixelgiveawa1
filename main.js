@@ -79,24 +79,31 @@ function ShowAuthControls()
 
 }}
 
-async function create_giveaway() {
+async function creategiveaway(vard) {
 
-  var id= document.getElementById("giveawayID").value;
-  var authorised_account= document.getElementById("authorised_account").value;
-  var entrycost= document.getElementById("entrycost").value;
-  var contract_account= document.getElementById("contract_account").value;
-  var loop_time_seconds= document.getElementById("loop_time_seconds").value;
-  var max_users= document.getElementById("max_users").value;
-  var templateID= document.getElementById("templateID").value;
-  var quantity_req= document.getElementById("quantity_req").value;
-
-  console.log(entrycost);
-  console.log(contract_account);
-  console.log(quantity_req);
-  console.log(quantity_req);
-  
+  console.log(vard);
   if (loggedIn) {
+
     HideMessage();
+
+    var id= document.getElementById("giveaway_id").value;
+    console.log(id);
+  
+    var authorised_account= document.getElementById("authorised_account").value;
+    console.log(authorised_account);
+
+    var entrycost= document.getElementById("entrycost").value;
+    console.log(entrycost);
+
+    var contract_account= document.getElementById("contract_account").value;
+    console.log(contract_account);
+
+    var loop_time_seconds= document.getElementById("loop_time_seconds").value;
+    var max_users= document.getElementById("maxusers").value;
+    var templateID= document.getElementById("template_id").value;
+    var quantity_req= document.getElementById("quantity_req").value;
+    console.log(loop_time_seconds);
+    console.log(quantity_req);
     try {
 
       var data1=
@@ -122,16 +129,15 @@ async function create_giveaway() {
       ShowMessage(
         '<div class="complete">Success</div><div class="link"><a href="https://wax.bloks.io/transaction/' +
           result.transaction_id +
-          '?tab=traces">View transaction</a></div>'
+          '?tab=traces'+ ' target="_blank">View transaction</a></div>'
       );
       main();
     } catch (e) {
       ShowToast(e.message);
     }
-  } else {
-    WalletListVisible(true);
-  }
-
+  
+  }else {
+    WalletListVisible(true);}
 }
 
 async function announcespin(id) {
@@ -153,7 +159,7 @@ async function announcespin(id) {
       ShowMessage(
         '<div class="complete">Success</div><div class="link"><a href="https://wax.bloks.io/transaction/' +
           result.transaction_id +
-          '?tab=traces">View transaction</a></div>'
+          '?tab=traces"'+ ' target="_blank">View transaction</a></div>'
       );
       main();
     } catch (e) {
@@ -188,7 +194,7 @@ async function join(id) {
       ShowMessage(
         '<div class="complete">Success</div><div class="link"><a href="https://wax.bloks.io/transaction/' +
           result.transaction_id +
-          '?tab=traces">View transaction</a></div>'
+          '?tab=traces"'+ ' target="_blank">View transaction</a></div>'
       );
       main();
     } catch (e) {
@@ -399,32 +405,31 @@ function ShowAdminControls() {
     }
   }
   menu+= "Create a new giveaway -<br><table>"
-  +"<tr> <div id='giveaway_ID'>Giveaway ID <input type='number' id='giveawayID' name='giveawayID'"+
+  +"<tr> <div id='giveawayID'>Giveaway ID <input type='number' id='giveaway_id' name='giveawayID'"+
   +"pattern='\d*' value='1' autofocus> </div></tr>"
-  +"<tr> <div id='auth_acc'>Authorised account <input type='text' id='authacc' name='authacc'"+
+  +"<tr> <div id='authacc'>Authorised account <input type='text' id='authorised_account' name='authacc'"+
   +"pattern='\d*' value='' autofocus> </div></tr>"
-  +"<tr> <div id='entrycost'>entrycost <input type='text' id='entry_cost' name='entrycost'"+
-  +"pattern='\d*' value='' autofocus> </div></tr>"
-  +"<tr> <div id='contract_account'>contract_account <input type='text' id='contractccount' name='contract_account'"+
-  +"pattern='\d*' value='' autofocus> </div></tr>"
-  +"<tr> <div id='loop_time_seconds'>loop_time_seconds <input type='number' id='timeinput' name='timeinput'"+
+  +"<tr> <div id='entrcost'>entrycost <input type='text' id='entrycost' name='entrycost'"+
   +"pattern='\d*' value='1' autofocus> </div></tr>"
-  +"<tr> <div id='users'>max users<input type='number' id='timeinput' name='timeinput'"+
+  +"<tr> <div id='contractaccount'>contract_account <input type='text' id='contract_account' name='contract_account'"+
   +"pattern='\d*' value='1' autofocus> </div></tr>"
-  +"<tr> <div id='templateID'>templateID <input type='number' id='timeinput' name='timeinput'"+
+  +"<tr> <div id='loop_tim_seconds'>loop_time_seconds <input type='number' id='loop_time_seconds' name='timeinput'"+
   +"pattern='\d*' value='1' autofocus> </div></tr>"
-  +"<tr> <div id='quantity_req'>quantity required <input type='number' id='timeinput' name='timeinput'"+
+  +"<tr> <div id='max_sers'>max users<input type='number' id='maxusers' name='maxusers'"+
+  +"pattern='\d*' value='1' autofocus> </div></tr>"
+  +"<tr> <div id='templateD'>templateID <input type='number' id='template_id' name='template_id'"+
+  +"pattern='\d*' value='1' autofocus> </div></tr>"
+  +"<tr> <div id='quantityreq'>quantity required <input type='number' id='quantity_req' name='quantity_req'"+
   +"pattern='\d*' value='1' autofocus></div> </tr>"
   +'<tr><td><button id="spin' +
   index +
   '" class="buy" onclick=' +
-  "create_giveaway(" +
-
-  ")" +">Create Giveaway "+
+  "creategiveaway(" +
+ 1
+ + ")" +">Create Giveaway "+
   "</button></td>";
-  +"</table>"
-
-  var v= document.getElementById("giveawayID");
+  
+  var v= document.getElementById("auth_acc");
   console.log(v);
 
   document.getElementById("controls").innerHTML = menu;
