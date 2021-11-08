@@ -45,24 +45,25 @@ async function main() {
  checkuser=GetAuthUsers();
  checkauth= await checkuser;
  
- isauth=check_auth(wallet_userAccount);
+ isauth=check_auth();
 
 if(!isauth)
  document.getElementById("controls").style.visibility="hidden";
+
   PopulateMenu();
 
 
  
 }
 
-function check_auth(username)
+function check_auth()
 {
   
  if(loggedIn)
  {
  for(i=0;i<checkauth.length;i++)
  {
-   if(checkauth[i].account==username)
+   if(checkauth[i].account==wallet_userAccount)
    return true;
  }
 }
@@ -73,7 +74,64 @@ function ShowAuthControls()
 {
   console.log(isauth);
   if(isauth)
+  {
   ShowAdminControls();
+
+}}
+
+async function create_giveaway() {
+
+  var id= document.getElementById("giveawayID").value;
+  var authorised_account= document.getElementById("authorised_account").value;
+  var entrycost= document.getElementById("entrycost").value;
+  var contract_account= document.getElementById("contract_account").value;
+  var loop_time_seconds= document.getElementById("loop_time_seconds").value;
+  var max_users= document.getElementById("max_users").value;
+  var templateID= document.getElementById("templateID").value;
+  var quantity_req= document.getElementById("quantity_req").value;
+
+  console.log(entrycost);
+  console.log(contract_account);
+  console.log(quantity_req);
+  console.log(quantity_req);
+  
+  if (loggedIn) {
+    HideMessage();
+    try {
+
+      var data1=
+      {
+        id:id,
+        authorised_account:authorised_account,
+        entrycost:entrycost,
+        contract_account:contract_account,
+        loop_time_seconds:loop_time_seconds,
+        max_users:max_users,
+        asset_ids:[],
+        templateID:templateID,
+        quantity_req:quantity_req,
+      };
+      const result = await wallet_transact([
+        {
+          account: contract,
+          name: "create",
+          authorization: [{ actor: wallet_userAccount, permission: anchorAuth }],
+          data:data1 ,
+        },
+      ]);
+      ShowMessage(
+        '<div class="complete">Success</div><div class="link"><a href="https://wax.bloks.io/transaction/' +
+          result.transaction_id +
+          '?tab=traces">View transaction</a></div>'
+      );
+      main();
+    } catch (e) {
+      ShowToast(e.message);
+    }
+  } else {
+    WalletListVisible(true);
+  }
+
 }
 
 async function announcespin(id) {
@@ -88,7 +146,7 @@ async function announcespin(id) {
           name: "announcespin",
           authorization: [{ actor: wallet_userAccount, permission: anchorAuth }],
           data: {
-            id: current.giveaway_id
+            id: current.campaign_id
           },
         },
       ]);
@@ -97,6 +155,7 @@ async function announcespin(id) {
           result.transaction_id +
           '?tab=traces">View transaction</a></div>'
       );
+      main();
     } catch (e) {
       ShowToast(e.message);
     }
@@ -122,7 +181,7 @@ async function join(id) {
             from: wallet_userAccount,
             to: contract,
             quantity: current.entrycost,
-            memo: current.giveaway_id,
+            memo: current.campaign_id,
           },
         },
       ]);
@@ -131,6 +190,7 @@ async function join(id) {
           result.transaction_id +
           '?tab=traces">View transaction</a></div>'
       );
+      main();
     } catch (e) {
       ShowToast(e.message);
     }
@@ -164,9 +224,9 @@ async function GetAuthUsers() {
   {
     auth_users.push({
       account: body.rows[i].account,  
-      giveaways_perday: body.rows[i].giveaways_perday,  
+      campaigns_perday: body.rows[i].campaigns_perday,  
       day_start_time: body.rows[i].day_start_time,
-      giveaways_today:body.rows[i].giveaways_today
+      campaigns_today:body.rows[i].campaigns_today
     });
   }
 
@@ -200,11 +260,13 @@ async function GetResults() {
   const body = await response.json();
 
   let results=[]; 
+
+  if(body.rows.length==0) return results;
   for(i=0;i<body.rows.length;i++)
   {
     results.push({
       id:parseInt(body.rows[i].id ),
-      giveaway_id: parseInt(body.rows[i].giveaway_id ),
+      campaign_id: parseInt(body.rows[i].campaign_id ),
       asset_id:body.rows[i].asset_id ,
       winner:body.rows[i].winner,
       roll_time:body.rows[i].roll_time,
@@ -257,7 +319,7 @@ async function GetConfig() {
     json: true,
     code: "pixelgiveawy",
     scope: "pixelgiveawy",
-    table: "giveaways",
+    table: "campaigns",
     limit: 150,
   });
 
@@ -270,12 +332,12 @@ async function GetConfig() {
   const body = await response.json();
   console.log(body);
 
-  let giveaways=[];
+  let campaigns=[];
   for(i=0;i<body.rows.length;i++)
   {
     if(body.rows[i].asset_ids.length!=0)
-    giveaways.push({
-      giveaway_id: parseInt(body.rows[i].id),
+    campaigns.push({
+      campaign_id: parseInt(body.rows[i].id),
       entrycost: body.rows[i].entrycost,
       account: body.rows[i].authorised_account,
       assets: body.rows[i].asset_ids,
@@ -288,9 +350,9 @@ async function GetConfig() {
       gv_contract: body.rows[i].contract_account
     });
   }
-
+console.log(campaigns);
   if (body.rows && Array.isArray(body.rows) && body.rows.length >= 1) { 
-    return giveaways;
+    return campaigns;
   } else {
     ShowToast("Unexpected response retrieving config");
     return { Valid: false };
@@ -320,7 +382,7 @@ function ShowAdminControls() {
     var disabled = config[index].assets.length>0? "" : " disabled";
 
     menu += '<div  class="menuentry"> <table><tr>';
-    menu += '<td class="stakeamount">' +"Giveaway ID "+ config[index].giveaway_id ;
+    menu += '<td class="stakeamount">' +"campaign ID "+ config[index].campaign_id ;
     menu += '<br>'  +"By "+ config[index].account+
     '<br>' +"Entry cost  "+ config[index].entrycost +'<br>' + "Total entries " +config[index].entrants.length+" / "+config[index].max_acc_size
     +'<br>' +"assets in pool "+ config[index].assets.length +'<br>' + "Time to roll "+ ts+" seconds"+  "</td>"+
@@ -336,6 +398,34 @@ function ShowAdminControls() {
     menu += "</tr></table></div>";
     }
   }
+  menu+= "Create a new giveaway -<br><table>"
+  +"<tr> <div id='giveaway_ID'>Giveaway ID <input type='number' id='giveawayID' name='giveawayID'"+
+  +"pattern='\d*' value='1' autofocus> </div></tr>"
+  +"<tr> <div id='auth_acc'>Authorised account <input type='text' id='authacc' name='authacc'"+
+  +"pattern='\d*' value='' autofocus> </div></tr>"
+  +"<tr> <div id='entrycost'>entrycost <input type='text' id='entry_cost' name='entrycost'"+
+  +"pattern='\d*' value='' autofocus> </div></tr>"
+  +"<tr> <div id='contract_account'>contract_account <input type='text' id='contractccount' name='contract_account'"+
+  +"pattern='\d*' value='' autofocus> </div></tr>"
+  +"<tr> <div id='loop_time_seconds'>loop_time_seconds <input type='number' id='timeinput' name='timeinput'"+
+  +"pattern='\d*' value='1' autofocus> </div></tr>"
+  +"<tr> <div id='users'>max users<input type='number' id='timeinput' name='timeinput'"+
+  +"pattern='\d*' value='1' autofocus> </div></tr>"
+  +"<tr> <div id='templateID'>templateID <input type='number' id='timeinput' name='timeinput'"+
+  +"pattern='\d*' value='1' autofocus> </div></tr>"
+  +"<tr> <div id='quantity_req'>quantity required <input type='number' id='timeinput' name='timeinput'"+
+  +"pattern='\d*' value='1' autofocus></div> </tr>"
+  +'<tr><td><button id="spin' +
+  index +
+  '" class="buy" onclick=' +
+  "create_giveaway(" +
+
+  ")" +">Create Giveaway "+
+  "</button></td>";
+  +"</table>"
+
+  var v= document.getElementById("giveawayID");
+  console.log(v);
 
   document.getElementById("controls").innerHTML = menu;
 }
@@ -343,6 +433,7 @@ function ShowAdminControls() {
 function PopulateMenu() {
   var menu = "";
   var symbol = "WAX";
+  console.log(config.length);
   for (var index = 0; index < config.length; ++index) {
     console.log(config[index].account);
     var disabled = config[index].assets.length>0? "" : " disabled";
@@ -354,11 +445,11 @@ function PopulateMenu() {
     
     
 
-    var ts = utcSecondsSinceEpoch-date>config[index].timer?0:(date+config[index].timer)-utcSecondsSinceEpoch ;
+    var ts = utcSecondsSinceEpoch-date>config[index].timer?0:(date+config[index].timer)-utcSecondsSinceEpoch;
     console.log(utcSecondsSinceEpoch-date);
     
     menu += '<div  class="menuentry"><table><tr>';
-    menu += '<td class="stakeamount">' +"Giveaway ID "+ config[index].giveaway_id ;
+    menu += '<td class="stakeamount">' +"campaign ID "+ config[index].campaign_id ;
     menu += '<br>'  +"By "+ config[index].account +
     '<br>' +"Entry cost  "+ config[index].entrycost +'<br>' + "Total entries " +config[index].entrants.length+" / "+config[index].max_acc_size
     +'<br>' +"assets in pool "+ config[index].assets.length +'<br>' + "Time to roll "+ ts+ " seconds"+ "</td>"+
@@ -390,7 +481,7 @@ function PopulateResultList() {
     html +=
       '<div  class="results">'+
       "ID: "+results[index].id  +"<br>"+
-      "Giveaway ID: "+results[index].giveaway_id  +
+      "campaign ID: "+results[index].campaign_id  +
 
       "<br>"+"Asset won:<a href=" +
       src2 +results[index].asset_id+
@@ -407,13 +498,13 @@ function PopulateResultList() {
 
 }
 
-async function seeassets(giveaway_id) {
-  current=config[giveaway_id];
+async function seeassets(campaign_id) {
+  current=config[campaign_id];
 
   const assetPromise=GetAssets(current.assets);
   const assets=await assetPromise;
   console.log(assets);
-  var html = '<div  id="assets">'+"Assets in giveaway"+current.giveaway_id+"<br>";
+  var html = '<div  id="assets">'+"Assets in campaign"+current.campaign_id+"<br>";
   let src = "https://ipfs.wecan.dev/ipfs/";   
   let src2="https://wax-test.atomichub.io/explorer/asset/";
 
