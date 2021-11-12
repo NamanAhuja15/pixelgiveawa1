@@ -438,26 +438,30 @@ function ShowAdminControls() {
 function PopulateMenu() {
   var menu = "";
   var symbol = "WAX";
-  console.log(config.length);
   for (var index = 0; index < config.length; ++index) {
     console.log(config[index].account);
     var disabled = config[index].assets.length>0? "" : " disabled";
     var datex=Date.parse(config[index].last_roll);
     var now= new Date();
     var date=Math.floor(datex/1000);    
-    const utcMilllisecondsSinceEpoch = now.getTime() + (now.getTimezoneOffset() * 60 * 1000)  
-    const utcSecondsSinceEpoch = Math.round(utcMilllisecondsSinceEpoch / 1000) 
+    const utcMilllisecondsSinceEpoch = now.getTime()+ (now.getTimezoneOffset() * 60 * 1000)  ;
+    const utcSecondsSinceEpoch = Math.round(utcMilllisecondsSinceEpoch / 1000) ;
     
     
+    var d="time"+index;
 
     var ts = utcSecondsSinceEpoch-date>config[index].timer?0:(date+config[index].timer)-utcSecondsSinceEpoch;
-    console.log(utcSecondsSinceEpoch-date);
-    
+    var list="";
+    config[index].entrants.forEach(v => {
+      list+=v.toString();
+      config[index].entrants.length>1?list+=", </br>":"";
+      console.log(v);
+    });
     menu += '<div  class="menuentry"><table><tr>';
     menu += '<td class="stakeamount">' +"campaign ID "+ config[index].campaign_id ;
     menu += '<br>'  +"By "+ config[index].account +
     '<br>' +"Entry cost  "+ config[index].entrycost +'<br>' + "Total entries " +config[index].entrants.length+" / "+config[index].max_acc_size
-    +'<br>' +"assets in pool "+ config[index].assets.length +'<br>' + "Time to roll "+ ts+ " seconds"+ "</td>"+
+    +'<br>' +"Total amount of prizes "+ config[index].assets.length +'<br>' +"<div id="+d+ ">"+ "</div></br>" + "Entrants  "+list+  "</td>"+
     '<tr><td><button id="join' +
       index +
       '" class="buy" onclick=' +
@@ -473,8 +477,31 @@ function PopulateMenu() {
         ")" +">See assets in pool "+
         "</button></td>";
     menu += "</tr></table></div>";
+  startTimer(ts,index);
   }
+
   document.getElementById("menu").innerHTML = menu;
+}
+
+
+function startTimer(duration, index) {
+  var d="time"+index;
+    var timer = duration, minutes, seconds;
+    setInterval(function () {
+        hours=  parseInt(timer / 3600, 10)
+        minutes = parseInt((timer-hours*3600) / 60,10);
+        seconds = parseInt(timer % 60, 10);
+
+        hours = hours < 10 ? "0" + hours : hours;
+
+        minutes = minutes < 10 ? "0" + minutes : minutes;
+        seconds = seconds < 10 ? "0" + seconds : seconds; 
+        display= hours+":"+minutes+":"+seconds;
+        document.getElementById(d).innerHTML="Time to roll  "+display;
+        if (--timer < 0) {
+            timer =-10;
+        }
+    }, 1000);
 }
 
 function PopulateResultList() {
