@@ -1,33 +1,9 @@
-const dapp = "WaxCPULoan";
-const endpoint = "testnet.wax.pink.gg";
+const dapp = "PIXELCAMPAIGN";
+const endpoint = "wax.pink.gg";
 const chainId =
-  "f16b1833c747c43682f4386fca9cbb327929334a762755ebec17f6f23c9b8a12";
+  "1064487b3cd1a897ce03ae5b6a865651747e2e152090f99c1d19d44e01aea5a4";
 const tokenContract = { WAX: "eosio.token" };
-const menuPrices = [1, 2, 4];
-const pools = [
-  {
-    name: "Pool 1",
-    url: "https://cpuloanpools.github.io/cpuloanpools/",
-    contract: "cpuloanstak1",
-  },
-  {
-    name: "Pool 2",
-    url: "https://cpuloanpools.github.io/cpuloanpools/SecondPool/",
-    contract: "cpuloantests",
-  },
-  {
-    name: "Pool 3",
-    url: "https://cpuloanpools.github.io/cpuloanpools/ThirdPool/",
-    contract: "cpuloantests",
-  },
-  {
-    name: "Pool 4",
-    url: "https://cpuloanpools.github.io/cpuloanpools/FourthPool/",
-    contract: "cpuloantests",
-  },
 
-  //{ name: "x2 pool", url: "/x2pool/", contract: "x2waxcpuloan" },
-];
 
 var anchorAuth="owner";
 var isauth=false;
@@ -211,8 +187,8 @@ async function GetAuthUsers() {
 
   var data = JSON.stringify({
     json: true,
-    code: "pixelgiveawy",
-    scope: "pixelgiveawy",
+    code: "fortunebirds",
+    scope: "fortunebirds",
     table: "authusers",
     limit: 1000,
   });
@@ -251,8 +227,8 @@ async function GetResults() {
 
   var data = JSON.stringify({
     json: true,
-    code: "pixelgiveawy",
-    scope: "pixelgiveawy",
+    code: "fortunebirds",
+    scope: "fortunebirds",
     table: "results",
     limit: 1000,
   });
@@ -297,7 +273,7 @@ async function GetAssets(assetIDs) {
 
     var path = "atomicassets/v1/assets/"+assetIDs[i];
 
-  const response = await fetch("https://" + "test.wax.api.atomicassets.io/" + path, {
+  const response = await fetch("https://" + "wax.api.atomicassets.io/" + path, {
     headers: { "Content-Type": "text/plain" },
     method: "POST",
   });
@@ -323,8 +299,8 @@ async function GetConfig() {
 
   var data = JSON.stringify({
     json: true,
-    code: "pixelgiveawy",
-    scope: "pixelgiveawy",
+    code: "fortunebirds",
+    scope: "fortunebirds",
     table: "campaigns",
     limit: 150,
   });
@@ -382,7 +358,7 @@ function ShowAdminControls() {
     const utcSecondsSinceEpoch = Math.round(utcMilllisecondsSinceEpoch / 1000) 
     
     
-
+    var d="auth"+index;
     var ts = utcSecondsSinceEpoch-date>config[index].timer?0:(date+config[index].timer)-utcSecondsSinceEpoch;
     console.log(utcSecondsSinceEpoch-date>config[index].timer);
     var disabled = config[index].assets.length>0? "" : " disabled";
@@ -391,7 +367,7 @@ function ShowAdminControls() {
     menu += '<td class="stakeamount">' +"campaign ID "+ config[index].campaign_id ;
     menu += '<br>'  +"By "+ config[index].account+
     '<br>' +"Entry cost  "+ config[index].entrycost +'<br>' + "Total entries " +config[index].entrants.length+" / "+config[index].max_acc_size
-    +'<br>' +"assets in pool "+ config[index].assets.length +'<br>' + "Time to roll "+ ts+" seconds"+  "</td>"+
+    +'<br>' +"assets in pool "+ config[index].assets.length +'<br>' + "<div id="+d+ "></div></td>"+
       '<tr><td><button id="spin' +
         index +
         '" class="buy" onclick=' +
@@ -402,6 +378,8 @@ function ShowAdminControls() {
 
 
     menu += "</tr></table></div>";
+     startTimer(ts,index,"auth");
+
     }
   }
   menu+= "Create a new giveaway -<br><table>"
@@ -477,15 +455,15 @@ function PopulateMenu() {
         ")" +">See assets in pool "+
         "</button></td>";
     menu += "</tr></table></div>";
-  startTimer(ts,index);
+  startTimer(ts,index,"menu");
   }
 
   document.getElementById("menu").innerHTML = menu;
 }
 
 
-function startTimer(duration, index) {
-  var d="time"+index;
+function startTimer(duration, index,type) {
+  var d=type=="menu"?"time"+index:"auth"+index;
     var timer = duration, minutes, seconds;
     setInterval(function () {
         hours=  parseInt(timer / 3600, 10)
@@ -501,13 +479,14 @@ function startTimer(duration, index) {
         if (--timer < 0) {
             timer =-10;
         }
+        else if(timer==0)main();
     }, 1000);
 }
 
 function PopulateResultList() {
   var html = '<div  id="results">'+"RESULTS"+"<br>";
   let src = "https://ipfs.wecan.dev/ipfs/";   
-  let src2="https://wax-test.atomichub.io/explorer/asset/";
+  let src2="https://wax.atomichub.io/explorer/asset/";
 
   for (var index = results.length-1; index >=0; --index) {
     html +=
@@ -538,7 +517,7 @@ async function seeassets(campaign_id) {
   console.log(assets);
   var html = '<div  id="assets">'+"Assets in campaign"+current.campaign_id+"<br>";
   let src = "https://ipfs.wecan.dev/ipfs/";   
-  let src2="https://wax-test.atomichub.io/explorer/asset/";
+  let src2="https://wax.atomichub.io/explorer/asset/";
 
   for(i=0;i<assets.length;i++)
 {

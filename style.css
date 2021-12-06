@@ -302,7 +302,7 @@ a:-webkit-any-link {
   background: linear-gradient(to bottom right, #dce7ff, #edf7ff);
 
   text-align: center;
-  font-size: 65px;
+  font-size: 5px;
   text-shadow: 1px 1px 2px #ffffff;
 }
 
@@ -311,7 +311,7 @@ a:-webkit-any-link {
   grid-template-rows: auto auto;
   grid-template-columns: auto auto;
   align-items:flex-start;
-  gap: 20px;
+  gap: 5px;
   justify-content:flex-start;
 }
 
@@ -333,6 +333,12 @@ font-weight: bold;
 #timeselect {
   margin: 5% 0;
 }
+.nftimg {
+  width: 1px;
+  height: 1px;
+  padding: 1px;
+}
+
 #timeinput {
   text-align: right;
   font-size: 30px;
