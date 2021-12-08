@@ -215,7 +215,6 @@ async function GetAuthUsers() {
   if (auth_users.length >= 1) { 
     return auth_users;
   } else {
-    ShowToast("Unexpected response retrieving results");
     return { Valid: false };
   } /* */
 
@@ -258,7 +257,6 @@ async function GetResults() {
   if (body.rows && Array.isArray(body.rows) && body.rows.length >= 1) { 
     return results;
   } else {
-    ShowToast("Unexpected response retrieving results");
     return { Valid: false };
   } /* */
 
@@ -289,7 +287,6 @@ async function GetAssets(assetIDs) {
   if (results.length>0) { 
     return results;
   } else {
-    ShowToast("Unexpected response retrieving results");
     return { Valid: false };
   } /* */
 }
@@ -336,7 +333,6 @@ console.log(campaigns);
   if (body.rows && Array.isArray(body.rows) && body.rows.length >= 1) { 
     return campaigns;
   } else {
-    ShowToast("Unexpected response retrieving config");
     return { Valid: false };
   } /* */
 }
@@ -515,7 +511,7 @@ async function seeassets(campaign_id) {
   const assetPromise=GetAssets(current.assets);
   const assets=await assetPromise;
   console.log(assets);
-  var html = '<div  id="assets">'+"Assets in campaign"+current.campaign_id+"<br>";
+  var html = '<div id="assets">'+"Assets in campaign"+current.campaign_id;
   let src = "https://ipfs.wecan.dev/ipfs/";   
   let src2="https://wax.atomichub.io/explorer/asset/";
 
@@ -523,9 +519,9 @@ async function seeassets(campaign_id) {
 {
 
   var img = assets[i].img;
-  html+="<div class='nftimg'> <img src="+ src + img +"></div>";
+  html+=" <img class='nftimg' src="+ src + img +">";
   html +=
-  '<div  class="pools_td"><a href="' +
+  '<div class="pools_td"><a href="' +
   src2 +assets[i].asset_id+
   ' "style="text-decoration:underline;" target="_blank" >' +
   "<div id="+assets[i].asset_id+">"+"AssetID "+assets[i].asset_id
@@ -643,7 +639,7 @@ async function ShowToast(message) {
   var element = document.getElementById("toast");
   element.innerHTML = message;
   toastU = 0;
-  var slideFrac = 0.05;
+  var slideFrac = 0.15;
   var width = element.offsetWidth;
   var right = 16;
   var id = setInterval(frame, 1e3 / 60);

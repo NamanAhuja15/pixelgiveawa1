@@ -96,9 +96,6 @@ top:50%;
 
 
 .nftimg {
-  width: 250px;
-  height: auto;
-  padding: 10px;
 }
 
 .bottomBar {
@@ -141,6 +138,7 @@ top:50%;
 
 .rightContent {
   justify-content: left;
+  width: auto;
   align-items: flex-start;
 }
 
@@ -334,9 +332,8 @@ font-weight: bold;
   margin: 5% 0;
 }
 .nftimg {
-  width: 1px;
-  height: 1px;
-  padding: 1px;
+  width:  10%;
+  height: 10%;
 }
 
 #timeinput {
