@@ -7,16 +7,21 @@ const tokenContract = { WAX: "eosio.token" };
 
 var anchorAuth="owner";
 var isauth=false;
+
 main();
+loggedIn = false;
+
 async function main() {
-  loggedIn = false;
+
+
   configPromise = GetConfig();
   config = await configPromise;
   resultPromise=GetResults();
   results=await resultPromise;
     PopulateResultList();
-    autoLogin();
 
+    if(!loggedIn)
+    autoLogin();
     
  checkuser=GetAuthUsers();
  checkauth= await checkuser;
