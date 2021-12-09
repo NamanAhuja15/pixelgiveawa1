@@ -54,19 +54,56 @@ function ShowAuthControls()
   ShowAdminControls();
 
 }}
-
-async function creategiveaway(vard) {
+async function delcampaign(vard) {
 
   console.log(vard);
   if (loggedIn) {
 
     HideMessage();
 
-    var id= document.getElementById("giveaway_id").value;
+    var id= document.getElementById("delcampaign_id").value;
     console.log(id);
   
-    var authorised_account= document.getElementById("authorised_account").value;
-    console.log(authorised_account);
+    try {
+
+      var data2=
+      {
+        id:id,
+      };
+      const result = await wallet_transact([
+        {
+          account: contract,
+          name: "delcampaign",
+          authorization: [{ actor: wallet_userAccount, permission: anchorAuth }],
+          data:data2 ,
+        },
+      ]);
+      ShowMessage(
+        '<div class="complete">Success</div><div class="link"><a href="https://wax.bloks.io/transaction/' +
+          result.transaction_id +
+          '?tab=traces'+ ' target="_blank">View transaction</a></div>'
+      );
+      main();
+    } catch (e) {
+      ShowToast(e.message);
+    }
+  
+  }else {
+    WalletListVisible(true);}
+}
+
+async function createcampaign(vard) {
+
+  console.log(vard);
+  if (loggedIn) {
+
+    HideMessage();
+
+    var id= document.getElementById("campaign_id").value;
+    console.log(id);
+  
+    var authorized_account= document.getElementById("authorized_account").value;
+    console.log(authorized_account);
 
     var entrycost= document.getElementById("entrycost").value;
     console.log(entrycost);
@@ -76,23 +113,19 @@ async function creategiveaway(vard) {
 
     var loop_time_seconds= document.getElementById("loop_time_seconds").value;
     var max_users= document.getElementById("maxusers").value;
-    var templateID= document.getElementById("template_id").value;
-    var quantity_req= document.getElementById("quantity_req").value;
-    console.log(loop_time_seconds);
-    console.log(quantity_req);
     try {
 
       var data1=
       {
         id:id,
-        authorised_account:authorised_account,
+        authorized_account:authorized_account,
         entrycost:entrycost,
         contract_account:contract_account,
         loop_time_seconds:loop_time_seconds,
         max_users:max_users,
         asset_ids:[],
-        templateID:templateID,
-        quantity_req:quantity_req,
+        templateID:0,
+        quantity_req:0,
       };
       const result = await wallet_transact([
         {
@@ -318,7 +351,7 @@ async function GetConfig() {
     campaigns.push({
       campaign_id: parseInt(body.rows[i].id),
       entrycost: body.rows[i].entrycost,
-      account: body.rows[i].authorised_account,
+      account: body.rows[i].authorized_account,
       assets: body.rows[i].asset_ids,
       entrants: body.rows[i].accounts,
       max_acc_size: body.rows[i].max_users,
@@ -341,7 +374,7 @@ console.log(campaigns);
 function ShowAdminControls() {
   var controls = "";
   var symbol = "WAX";
-  var menu ="AUTH USER CONTROLS";
+  var menu ="";
   for (var index = 0; index < config.length; ++index) {
     console.log(config[index].account);
     if(config[index].account==wallet_userAccount  )
@@ -378,10 +411,10 @@ function ShowAdminControls() {
 
     }
   }
-  menu+= "Create a new giveaway -<br><table>"
-  +"<tr> <div id='giveawayID'>Giveaway ID <input type='number' id='giveaway_id' name='giveawayID'"+
+  menu+= "Create campaign-<br><table>"
+  +"<tr> <div id='campaign'>Campaign ID <input type='number' id='campaign_id' name='campaign'"+
   +"pattern='\d*' value='1' autofocus> </div></tr>"
-  +"<tr> <div id='authacc'>Authorised account <input type='text' id='authorised_account' name='authacc'"+
+  +"<tr> <div id='authacc'>Authorized account <input type='text' id='authorized_account' name='authacc'"+
   +"pattern='\d*' value='' autofocus> </div></tr>"
   +"<tr> <div id='entrcost'>entrycost <input type='text' id='entrycost' name='entrycost'"+
   +"pattern='\d*' value='1' autofocus> </div></tr>"
@@ -391,18 +424,25 @@ function ShowAdminControls() {
   +"pattern='\d*' value='1' autofocus> </div></tr>"
   +"<tr> <div id='max_sers'>max users<input type='number' id='maxusers' name='maxusers'"+
   +"pattern='\d*' value='1' autofocus> </div></tr>"
-  +"<tr> <div id='templateD'>templateID <input type='number' id='template_id' name='template_id'"+
-  +"pattern='\d*' value='1' autofocus> </div></tr>"
-  +"<tr> <div id='quantityreq'>quantity required <input type='number' id='quantity_req' name='quantity_req'"+
-  +"pattern='\d*' value='1' autofocus></div> </tr>"
   +'<tr><td><button id="spin' +
   index +
   '" class="buy" onclick=' +
-  "creategiveaway(" +
+  "createcampaign(" +
  1
- + ")" +">Create Giveaway "+
+ + ")" +">Create Campaign "+
   "</button></td>";
-  
+
+  menu+= "Delete campaign-<br><table>"
+  +"<tr> <div id='campaign'>Campaign ID <input type='number' id='delcampaign_id' name='campaign'"+
+  +"pattern='\d*' value='1' autofocus> </div></tr>"
+  +'<tr><td><button id="del' +
+  index +
+  '" class="buy" onclick=' +
+  "delcampaign(" +
+ 1
+ + ")" +">Delete Campaign "+
+  "</button></td>";
+
   var v= document.getElementById("auth_acc");
   console.log(v);
 
